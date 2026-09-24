@@ -1,0 +1,28 @@
+# gregWeb.Wiki stack.
+# Local:  WIKI_PORT=8090 podman compose up -d --build  (or podman/docker compose)
+# Portainer: repository stack, compose path `docker-compose.yml` (repo root).
+name: gregweb-wiki
+
+services:
+  wiki:
+    build: .
+    image: gregweb-wiki:latest
+    container_name: gregweb-wiki
+    restart: unless-stopped
+    ports:
+      - "${WIKI_PORT:-8088}:80"
+    # Public hostname via Traefik (mirror gregWeb.Landingpage pattern):
+    # 1. create/attach the external `proxy` network, 2. uncomment:
+    # networks:
+    #   - proxy
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.docker.network=proxy"
+    #   - "traefik.http.routers.gregwiki.rule=Host(`${WIKI_HOST:-wiki.gregframework.eu}`)"
+    #   - "traefik.http.routers.gregwiki.entrypoints=websecure"
+    #   - "traefik.http.routers.gregwiki.tls.certresolver=myresolver"
+    #   - "traefik.http.services.gregwiki.loadbalancer.server.port=80"
+
+# networks:
+#   proxy:
+#     external: true
