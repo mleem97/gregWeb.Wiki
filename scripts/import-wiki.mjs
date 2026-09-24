@@ -3,6 +3,8 @@
 // - _Sidebar.md        -> skipped (sidebar lives in astro.config.mjs)
 // - all other pages    -> lowercased filenames (stable slugs)
 // - prepends `title:` frontmatter from the first `# H1` (Starlight requires it)
+// - strips that first `# H1` from the body (Starlight renders `title:`
+//   as the page H1 — keeping it would show every heading twice)
 // - rewrites [[Wiki Links]] to relative markdown links, validated against
 //   the page list (warns on dangling targets instead of failing)
 // Run: `node scripts/import-wiki.mjs` (also via `npm run sync` / `npm run build`).
@@ -35,6 +37,7 @@ for (const file of files) {
   const title = (h1 ?? `# ${file.replace(/\.md$/, '')}`).replace(/^# /, '').trim();
   const body = raw
     .replace(/^---\n[\s\S]*?\n---\n/, '') // strip existing frontmatter if any
+    .replace(/^# .*\r?\n/, '') // drop title H1 (lives in frontmatter now — avoids double H1 in Astro)
     .replace(/\[\[([^\]]+)\]\]/g, (_, inner) => {
       const [targetRaw, labelRaw] = inner.split('|').map((s) => s.trim());
       const slug = slugOf(targetRaw);

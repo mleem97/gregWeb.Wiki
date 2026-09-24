@@ -24,6 +24,10 @@ const jsTrack = [
 	{ label: 'JS 01 · Setup', slug: 'guidebook-js-01-setup' },
 	{ label: 'JS 02 · Project', slug: 'guidebook-js-02-project' },
 ];
+const rustTrack = [
+	{ label: 'Rust 01 · Setup', slug: 'guidebook-rust-01-setup' },
+	{ label: 'Rust 02 · Project', slug: 'guidebook-rust-02-project' },
+];
 const modellingTrack = [
 	{ label: 'Modelling Overview', slug: 'guidebook-modelling-overview' },
 	{ label: 'OBJ + Blender', slug: 'guidebook-modelling-obj-blender' },
@@ -52,6 +56,27 @@ export default defineConfig({
 			sidebar: [
 				{ label: 'Home', slug: 'index' },
 				{
+					label: 'Hooks',
+					collapsed: false,
+					items: [
+						{ label: 'Hooks Reference', slug: 'hooks-reference' },
+						{ label: 'Core Events', slug: 'core-events' },
+						{ label: 'Events + Hooks Guide', slug: 'developer-events-hooks-guide' },
+						{ label: 'Lua 02 · Events', slug: 'guidebook-lua-02-events' },
+					],
+				},
+				{ label: 'Glossary', slug: 'glossary' },
+				{
+					label: 'FAQ + Help',
+					collapsed: false,
+					items: [
+						{ label: 'FAQ + Troubleshooting', slug: 'faq-troubleshooting' },
+						{ label: 'Debugging', slug: 'guidebook-debugging' },
+						{ label: 'Modelling Troubleshooting', slug: 'guidebook-modelling-troubleshooting' },
+						{ label: 'Porting Matrix', slug: 'guidebook-porting-matrix' },
+					],
+				},
+				{
 					label: 'Guidebook',
 					items: [
 						{ label: 'Guidebook', slug: 'guidebook' },
@@ -59,6 +84,7 @@ export default defineConfig({
 						{ label: 'Lua track', items: luaTrack },
 						{ label: 'C# track', items: csharpTrack },
 						{ label: 'JS track', items: jsTrack },
+						{ label: 'Rust track', items: rustTrack },
 						{ label: 'Modelling track', items: modellingTrack },
 						{ label: 'Debugging', slug: 'guidebook-debugging' },
 						{ label: 'Computer UI', slug: 'guidebook-computer-ui' },
@@ -79,7 +105,6 @@ export default defineConfig({
 					label: 'Core',
 					items: [
 						{ label: 'Overview', slug: 'core-overview' },
-						{ label: 'Events', slug: 'core-events' },
 						{ label: 'Save Engine', slug: 'core-save-engine' },
 					],
 				},
@@ -91,7 +116,6 @@ export default defineConfig({
 						{ label: 'First Lua Mod', slug: 'developer-first-lua-mod' },
 						{ label: 'First C# Mod', slug: 'developer-first-csharp-mod' },
 						{ label: 'Timers + Coroutines', slug: 'developer-timers-coroutines' },
-						{ label: 'Events + Hooks', slug: 'developer-events-hooks-guide' },
 						{ label: 'Data Storage', slug: 'developer-data-storage' },
 						{ label: 'UI Panels + HUD', slug: 'developer-ui-panels-hud' },
 						{ label: 'Shop Items', slug: 'developer-shop-items' },
@@ -101,14 +125,6 @@ export default defineConfig({
 						{ label: 'Native Co-op', slug: 'developer-native-coop' },
 						{ label: 'Best Practices', slug: 'developer-best-practices' },
 						{ label: 'Publishing', slug: 'developer-publishing' },
-					],
-				},
-				{
-					label: 'Reference',
-					items: [
-						{ label: 'Hooks Reference', slug: 'hooks-reference' },
-						{ label: 'Glossary', slug: 'glossary' },
-						{ label: 'FAQ + Troubleshooting', slug: 'faq-troubleshooting' },
 					],
 				},
 			],
