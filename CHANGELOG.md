@@ -6,6 +6,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Version: see [
 
 ### Changed
 
+- Oxide-style layout (docs.oxidemod.com): top nav with Guidebook ·
+  Core · Hooks · Glossary · FAQ via custom `Header.astro` override
+  (hidden on narrow viewports, sidebar takes over), landing page with
+  section cards (Guidebook / Core / Hooks / Glossary / FAQ), sidebar
+  order Guidebook → Core → Hooks → Glossary → FAQ → Players →
+  Developers. Mirrored in gregCore `.wiki/_Sidebar.md`.
 - Sidebar: `Hooks`, `Glossary` und `FAQ + Help` sind eigene
   Top-Level-Gruppen (aufklappbar) direkt nach Home — `Reference` ist
   aufgelöst. Zugehörige Seiten: Hooks ← Core Events, Events + Hooks

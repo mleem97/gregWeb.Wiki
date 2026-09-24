@@ -35,7 +35,7 @@ for (const file of files) {
   const lines = raw.split('\n');
   const h1 = lines.find((l) => l.startsWith('# '));
   const title = (h1 ?? `# ${file.replace(/\.md$/, '')}`).replace(/^# /, '').trim();
-  const body = raw
+  let body = raw
     .replace(/^---\n[\s\S]*?\n---\n/, '') // strip existing frontmatter if any
     .replace(/^# .*\r?\n/, '') // drop title H1 (lives in frontmatter now — avoids double H1 in Astro)
     .replace(/\[\[([^\]]+)\]\]/g, (_, inner) => {
@@ -62,6 +62,20 @@ for (const file of files) {
       `    - text: Install gregCore\n      link: ./player-installation/\n      icon: rocket\n      variant: secondary\n` +
       `    - text: GitHub\n      link: https://github.com/mleem97/gregCore\n      icon: github\n      variant: minimal\n` +
       `---\n`;
+    // Oxide-style section cards (docs.oxidemod.com: Guides · Core · Hooks),
+    // plus Glossary and FAQ so every top-nav section is one click away.
+    body +=
+      `\n## Browse the docs\n` +
+      `\n### [Guidebook](./guidebook/)\n` +
+      `\nStep-by-step tracks for Lua, C#, JS, Rust and modelling — from your first mod to release.\n` +
+      `\n### [Core](./core-overview/)\n` +
+      `\nFramework internals: architecture, events, the save engine and multi-mod design.\n` +
+      `\n### [Hooks](./hooks-reference/)\n` +
+      `\nFull event and hook reference — 1,850 game hooks in 22 groups, with usage and payloads.\n` +
+      `\n### [Glossary](./glossary/)\n` +
+      `\nEvery term used across this wiki, defined once.\n` +
+      `\n### [FAQ](./faq-troubleshooting/)\n` +
+      `\nSymptom → cause → fix for install, Lua mods, UI, saves and builds.\n`;
   }
   writeFileSync(join(outDir, out), `${frontmatter}\n${body}`);
   count++;

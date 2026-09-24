@@ -43,6 +43,10 @@ export default defineConfig({
 			title: 'gregCore Wiki',
 			description: 'Guidebook, Core reference, Hooks and Glossary for the gregCore Data Center mod framework.',
 			customCss: ['./src/styles/custom.css'],
+			components: {
+				// Oxide-style top nav (Guidebook · Core · Hooks · Glossary · FAQ).
+				Header: './src/components/Header.astro',
+			},
 			head: [
 				{ tag: 'link', attrs: { rel: 'preconnect', href: 'https://fonts.googleapis.com' } },
 				{ tag: 'link', attrs: { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' } },
@@ -55,6 +59,30 @@ export default defineConfig({
 			],
 			sidebar: [
 				{ label: 'Home', slug: 'index' },
+				{
+					label: 'Guidebook',
+					items: [
+						{ label: 'Guidebook', slug: 'guidebook' },
+						{ label: 'Prerequisites', slug: 'guidebook-prerequisites' },
+						{ label: 'Lua track', items: luaTrack },
+						{ label: 'C# track', items: csharpTrack },
+						{ label: 'JS track', items: jsTrack },
+						{ label: 'Rust track', items: rustTrack },
+						{ label: 'Modelling track', items: modellingTrack },
+						{ label: 'Debugging', slug: 'guidebook-debugging' },
+						{ label: 'Computer UI', slug: 'guidebook-computer-ui' },
+						{ label: 'Porting Matrix', slug: 'guidebook-porting-matrix' },
+						{ label: 'Release', slug: 'guidebook-release' },
+						{ label: 'Next Languages', slug: 'guidebook-next-languages' },
+					],
+				},
+				{
+					label: 'Core',
+					items: [
+						{ label: 'Overview', slug: 'core-overview' },
+						{ label: 'Save Engine', slug: 'core-save-engine' },
+					],
+				},
 				{
 					label: 'Hooks',
 					collapsed: false,
@@ -77,35 +105,11 @@ export default defineConfig({
 					],
 				},
 				{
-					label: 'Guidebook',
-					items: [
-						{ label: 'Guidebook', slug: 'guidebook' },
-						{ label: 'Prerequisites', slug: 'guidebook-prerequisites' },
-						{ label: 'Lua track', items: luaTrack },
-						{ label: 'C# track', items: csharpTrack },
-						{ label: 'JS track', items: jsTrack },
-						{ label: 'Rust track', items: rustTrack },
-						{ label: 'Modelling track', items: modellingTrack },
-						{ label: 'Debugging', slug: 'guidebook-debugging' },
-						{ label: 'Computer UI', slug: 'guidebook-computer-ui' },
-						{ label: 'Porting Matrix', slug: 'guidebook-porting-matrix' },
-						{ label: 'Release', slug: 'guidebook-release' },
-						{ label: 'Next Languages', slug: 'guidebook-next-languages' },
-					],
-				},
-				{
 					label: 'Players',
 					items: [
 						{ label: 'Getting Started', slug: 'player-getting-started' },
 						{ label: 'Installation', slug: 'player-installation' },
 						{ label: 'Mod Users Guide', slug: 'player-mod-users-guide' },
-					],
-				},
-				{
-					label: 'Core',
-					items: [
-						{ label: 'Overview', slug: 'core-overview' },
-						{ label: 'Save Engine', slug: 'core-save-engine' },
 					],
 				},
 				{
