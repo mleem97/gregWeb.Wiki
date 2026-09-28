@@ -23,6 +23,7 @@ This wiki is the complete guidebook for gregCore, structured after the Oxide doc
 | Understand the framework internals | [[Core Overview]] → [[Core Events]] → [[Core Save Engine]] |
 | Look up an event or API call | [[Hooks Reference]] + [[Glossary]] |
 | Fix something broken | [[FAQ Troubleshooting]] |
+| Implement something specific (lint, shop item, presets, packs) | [[Tutorials]] |
 
 ## 5-minute orientation
 

@@ -1,0 +1,35 @@
+---
+// Figure — image with caption in soft-neumorphism style.
+// src: final screenshots or Placehold.co placeholders
+// (https://placehold.co/1200x600/0d1c2d/8aebff?text=...).
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+const { src, alt, caption } = Astro.props;
+---
+<figure class="greg-figure">
+  <img src={src} alt={alt} loading="lazy" />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .greg-figure {
+    margin: 1.5rem 0;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: linear-gradient(145deg, #122131, #0d1c2d);
+    border: 1px solid rgba(133, 147, 151, 0.16);
+    box-shadow:
+      5px 5px 14px rgba(0, 0, 0, 0.38),
+      -2px -2px 8px rgba(212, 228, 250, 0.05);
+  }
+  .greg-figure img { display: block; width: 100%; height: auto; }
+  .greg-figure figcaption {
+    padding: 0.6rem 1rem;
+    font-size: 0.82rem;
+    color: #859397;
+    border-top: 1px solid rgba(133, 147, 151, 0.12);
+  }
+</style>

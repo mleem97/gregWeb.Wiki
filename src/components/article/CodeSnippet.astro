@@ -1,0 +1,97 @@
+---
+// CodeSnippet — GitHub-style container for MDX pages: title row (filename +
+// language) + copy button. Plain ``` code blocks already have copy built in
+// (expressive-code) — this component is for labeled snippets.
+interface Props {
+  title?: string;
+  lang?: string;
+  code: string;
+}
+const { title = 'snippet', lang = 'text', code } = Astro.props;
+---
+<div class="code-snippet" data-code-snippet>
+  <div class="cs-bar">
+    <span class="cs-dot" aria-hidden="true"></span>
+    <span class="cs-title">{title}</span>
+    <span class="cs-lang">{lang}</span>
+    <button type="button" class="cs-copy" data-copy-btn>COPY</button>
+  </div>
+  <pre><code data-code-text>{code}</code></pre>
+  <span class="cs-done" hidden>Copied!</span>
+</div>
+
+<script>
+  document.querySelectorAll('[data-code-snippet]').forEach((box) => {
+    const btn = box.querySelector('[data-copy-btn]');
+    const src = box.querySelector('[data-code-text]');
+    const done = box.querySelector('.cs-done');
+    btn?.addEventListener('click', async () => {
+      const text = src?.textContent ?? '';
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      if (done) {
+        // @ts-ignore
+        done.hidden = false;
+        setTimeout(() => {
+          // @ts-ignore
+          done.hidden = true;
+        }, 1500);
+      }
+    });
+  });
+</script>
+
+<style>
+  .code-snippet {
+    margin: 1.2rem 0;
+    border-radius: 0.9rem;
+    overflow: hidden;
+    background: #010f1f;
+    border: 1px solid rgba(133, 147, 151, 0.2);
+    box-shadow:
+      inset 3px 3px 8px rgba(0, 0, 0, 0.5),
+      4px 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  .cs-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.8rem;
+    background: #0d1c2d;
+    border-bottom: 1px solid rgba(133, 147, 151, 0.14);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+  }
+  .cs-dot { width: 10px; height: 10px; border-radius: 50%; background: #4de082; box-shadow: 0 0 8px rgba(77,224,130,.6); }
+  .cs-title { color: #d4e4fa; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cs-lang { color: #859397; }
+  .cs-copy {
+    background: #8aebff;
+    color: #051424;
+    border: 0;
+    border-radius: 0.45rem;
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.6rem;
+    cursor: pointer;
+  }
+  .code-snippet pre {
+    margin: 0;
+    padding: 0.9rem 1rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: #d4e4fa;
+  }
+  .cs-done { display: block; padding: 0 1rem 0.6rem; font-size: 0.75rem; color: #4de082; }
+  .cs-done[hidden] { display: none; }
+</style>

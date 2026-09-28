@@ -6,6 +6,7 @@ import Search from 'virtual:starlight/components/Search';
 import SiteTitle from 'virtual:starlight/components/SiteTitle';
 import SocialIcons from 'virtual:starlight/components/SocialIcons';
 import ThemeSelect from 'virtual:starlight/components/ThemeSelect';
+import AudienceSwitch from './AudienceSwitch.astro';
 
 /**
  * Oxide-style header: default Starlight header plus a centered top nav
@@ -17,11 +18,11 @@ const shouldRenderSearch =
 	config.pagefind || config.components.Search !== '@astrojs/starlight/components/Search.astro';
 
 const nav = [
-	{ label: 'Guidebook', href: '/guidebook/' },
-	{ label: 'Core', href: '/core-overview/' },
-	{ label: 'Hooks', href: '/hooks-reference/' },
-	{ label: 'Glossary', href: '/glossary/' },
-	{ label: 'FAQ', href: '/faq-troubleshooting/' },
+	{ label: 'Start', href: '/docs/start/getting-started/' },
+	{ label: 'Guidebook', href: '/docs/overview/' },
+	{ label: 'Core', href: '/docs/core/overview/' },
+	{ label: 'Hooks', href: '/hooks/reference/' },
+	{ label: 'FAQ', href: '/faq/troubleshooting/' },
 ];
 ---
 
@@ -36,6 +37,7 @@ const nav = [
 		{shouldRenderSearch && <Search />}
 	</div>
 	<div class="sl-hidden md:sl-flex print:hidden right-group">
+		<AudienceSwitch compact />
 		<div class="sl-flex social-icons">
 			<SocialIcons />
 		</div>

@@ -1,0 +1,274 @@
+---
+// HelpHero — Perplexity-style: breadcrumb + centered title + large search.
+// Stages: 1) vector graph DB (when configured via PUBLIC_VECTOR_SEARCH_URL,
+// with processing/enrichment), 2) Pagefind (header search), 3) live filter of
+// the category cards. Contract: src/lib/vector-search.ts.
+interface Props {
+  title?: string;
+  tagline?: string;
+}
+const {
+  title = 'How can we help?',
+  tagline = 'Guidebook, Core reference, Hooks & FAQ — clearly categorized, filterable by CodingLang.',
+} = Astro.props;
+---
+<nav class="help-crumb" aria-label="Breadcrumb">
+  <a href="/">Help Center</a>
+  <span aria-hidden="true">/</span>
+  <span aria-current="page">Home</span>
+</nav>
+
+<section class="help-hero">
+  <h1>{title}</h1>
+  <p>{tagline}</p>
+  <div class="help-search" role="search">
+    <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <circle cx="9" cy="9" r="6" />
+      <path d="M13.5 13.5L17 17" stroke-linecap="round" />
+    </svg>
+    <input
+      id="help-search-input"
+      type="search"
+      placeholder="Search articles — try “install”, “Lua events”, “save engine”…"
+      autocomplete="off"
+      aria-label="Search articles"
+      aria-expanded="false"
+      aria-controls="help-search-results"
+    />
+    <kbd>/</kbd>
+  </div>
+  <div id="help-search-results" class="help-results" hidden></div>
+  <p class="help-hint">Shortcut <kbd>/</kbd> focuses search · <kbd>Esc</kbd> closes it. <span data-vector-badge hidden>· Vector search active</span></p>
+</section>
+
+<script>
+  import { vectorSearch, vectorEndpoint } from '../lib/vector-search.ts';
+
+  function init() {
+    const input = document.getElementById('help-search-input');
+    const box = document.getElementById('help-search-results');
+    if (!input || !box) return;
+    const hasVector = !!vectorEndpoint();
+    if (hasVector) {
+      document.querySelectorAll('[data-vector-badge]').forEach((el) => {
+        // @ts-ignore
+        el.hidden = false;
+      });
+    }
+
+    let seq = 0;
+    let timer = 0;
+
+    function currentLang() {
+      return document.documentElement.dataset.lang || 'all';
+    }
+    function currentAudience() {
+      return document.documentElement.dataset.audience || 'moddev';
+    }
+
+    function renderHits(hits) {
+      if (!hits.length) {
+        // @ts-ignore
+        box.hidden = true;
+        // @ts-ignore
+        box.innerHTML = '';
+        // @ts-ignore
+        input.setAttribute('aria-expanded', 'false');
+        return;
+      }
+      // @ts-ignore
+      box.innerHTML = hits
+        .map(
+          (h) =>
+            `<a href="${h.url.replace(/"/g, '&quot')}" class="hr-item"><span class="hr-title">${escapeHtml(h.title)}</span><span class="hr-snippet">${escapeHtml(h.snippet)}</span></a>`,
+        )
+        .join('');
+      // @ts-ignore
+      box.hidden = false;
+      // @ts-ignore
+      input.setAttribute('aria-expanded', 'true');
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+    }
+
+    async function queryVector(q, mySeq) {
+      const hits = await vectorSearch(q, currentLang(), currentAudience());
+      if (mySeq !== seq) return; // drop stale responses
+      renderHits(hits);
+    }
+
+    // Live filter of the category cards by title/description (stage 3, always on)
+    function filterCards(q) {
+      document.querySelectorAll('[data-searchable]').forEach((el) => {
+        const text = (el.textContent || '').toLowerCase();
+        const matchLang = !el.hasAttribute('hidden');
+        // @ts-ignore
+        if (!q) { el.style.display = ''; return; }
+        // @ts-ignore
+        el.style.display = text.includes(q) && matchLang ? '' : 'none';
+      });
+    }
+
+    // @ts-ignore
+    input.addEventListener('input', () => {
+      // @ts-ignore
+      const q = (input.value || '').trim();
+      filterCards(q.toLowerCase());
+      // @ts-ignore
+      window.clearTimeout(timer);
+      // @ts-ignore
+      box.hidden = true;
+      if (!hasVector || q.length < 2) return;
+      seq += 1;
+      const mySeq = seq;
+      // @ts-ignore
+      timer = window.setTimeout(() => queryVector(q, mySeq), 220);
+    });
+
+    // Enter: first vector hit, otherwise open Pagefind
+    // @ts-ignore
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const first = box.querySelector('a.hr-item');
+        if (first) {
+          // @ts-ignore
+          window.location.href = first.getAttribute('href');
+        } else {
+          openPagefind();
+        }
+      }
+      if (e.key === 'Escape') {
+        // @ts-ignore
+        box.hidden = true;
+        // @ts-ignore
+        input.blur();
+      }
+    });
+
+    function openPagefind() {
+      const btn = document.querySelector(
+        'site-search button, button[data-open-modal], .header button[type="button"]',
+      );
+      // @ts-ignore
+      if (btn && btn.click) btn.click();
+    }
+
+    // "/" focuses, Esc blurs
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== input) {
+        const tag = (document.activeElement?.tagName || '').toLowerCase();
+        if (tag !== 'input' && tag !== 'textarea') {
+          e.preventDefault();
+          // @ts-ignore
+          input.focus();
+        }
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      // @ts-ignore
+      if (!e.target?.closest?.('.help-hero')) {
+        // @ts-ignore
+        box.hidden = true;
+      }
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+</script>
+
+<style>
+  .help-crumb {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #859397;
+    margin: 0 0 1rem;
+  }
+  .help-crumb a { color: #8aebff; text-decoration: none; font-weight: 600; }
+  .help-hero {
+    text-align: center;
+    padding: 2.2rem 1rem 1.6rem;
+    border-radius: 1.4rem;
+    background:
+      radial-gradient(600px 200px at 50% -40px, rgba(138, 235, 255, 0.14), transparent 70%),
+      linear-gradient(145deg, #0d1c2d, #0a1826);
+    border: 1px solid rgba(133, 147, 151, 0.12);
+    box-shadow:
+      6px 6px 18px rgba(0, 0, 0, 0.35),
+      -3px -3px 12px rgba(212, 228, 250, 0.04);
+  }
+  .help-hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+    margin: 0 0 0.5rem;
+    color: #d4e4fa;
+    letter-spacing: -0.01em;
+  }
+  .help-hero p { color: #bbc9cd; margin: 0 auto; max-width: 44rem; }
+  .help-search {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 1.2rem auto 0;
+    max-width: 36rem;
+    background: #010f1f;
+    border: 1px solid rgba(138, 235, 255, 0.22);
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    color: #859397;
+    box-shadow:
+      inset 3px 3px 8px rgba(0, 0, 0, 0.55),
+      inset -2px -2px 6px rgba(212, 228, 250, 0.04),
+      0 0 24px -8px rgba(138, 235, 255, 0.25);
+  }
+  .help-search input {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    color: #d4e4fa;
+    font: inherit;
+    font-size: 0.95rem;
+  }
+  .help-search input::placeholder { color: #5f6f75; }
+  .help-search kbd, .help-hint kbd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    background: #122131;
+    border: 1px solid rgba(133, 147, 151, 0.25);
+    border-bottom-width: 2px;
+    border-radius: 0.35rem;
+    padding: 0.05rem 0.4rem;
+    color: #bbc9cd;
+  }
+  .help-hint { margin-top: 0.7rem !important; font-size: 0.8rem !important; opacity: 0.8; }
+  .help-results {
+    margin: 0.7rem auto 0;
+    max-width: 36rem;
+    text-align: left;
+    background: linear-gradient(145deg, #122131, #0d1c2d);
+    border: 1px solid rgba(138, 235, 255, 0.25);
+    border-radius: 0.9rem;
+    overflow: hidden;
+    box-shadow:
+      6px 6px 18px rgba(0, 0, 0, 0.4),
+      0 0 24px -8px rgba(138, 235, 255, 0.35);
+  }
+  .help-results .hr-item {
+    display: block;
+    padding: 0.65rem 0.9rem;
+    text-decoration: none;
+    border-top: 1px solid rgba(133, 147, 151, 0.1);
+  }
+  .help-results .hr-item:first-child { border-top: 0; }
+  .help-results .hr-item:hover { background: rgba(138, 235, 255, 0.07); }
+  .help-results .hr-title { display: block; color: #8aebff; font-weight: 700; font-size: 0.9rem; }
+  .help-results .hr-snippet { display: block; color: #bbc9cd; font-size: 0.8rem; margin-top: 0.15rem; }
+</style>

@@ -1,7 +1,9 @@
 /* gregWeb.Wiki theme — gregFramework "Terminal Core" (Obsidian-Cyan).
    Mirrors gregWeb.Landingpage design.json: background #051424,
    primary #8aebff / #22d3ee, secondary #4de082, Space Grotesk headlines,
-   Inter body, JetBrains Mono code, glass surfaces. */
+   Inter body, JetBrains Mono code.
+   Style mix: flat-minimalist base + SOFT neumorphism (subtly raised,
+   never plastic) for cards/buttons/inputs. */
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -42,6 +44,11 @@
 	--sl-color-green: #4de082;
 	--sl-color-green-high: #a7f3c7;
 
+	/* Soft neumorphism: flat, but with readable depth */
+	--neu-out: 5px 5px 14px rgba(0, 0, 0, 0.38), -2px -2px 8px rgba(212, 228, 250, 0.05);
+	--neu-in: inset 3px 3px 8px rgba(0, 0, 0, 0.5), inset -2px -2px 6px rgba(212, 228, 250, 0.04);
+	--neu-card: linear-gradient(145deg, #122131, #0d1c2d);
+
 	--sl-shadow-md: 0 0 24px -2px rgba(138, 235, 255, 0.12);
 	--sl-shadow-lg: 0 0 48px -4px rgba(138, 235, 255, 0.25);
 }
@@ -79,4 +86,114 @@ starlight-theme-select {
 .sidebar-content a[aria-current='page'] {
 	border-inline-start: 2px solid #22d3ee;
 	color: #8aebff;
+}
+
+/* ---- Callouts (Starlight :::note|tip|caution|danger): soft neumorphism ---- */
+.starlight-aside {
+	border-radius: 0.9rem;
+	box-shadow: var(--neu-out);
+	border: 1px solid rgba(133, 147, 151, 0.14);
+	border-inline-start-width: 0.25rem;
+}
+.starlight-aside--note {
+	--sl-color-asides-text-accent: #8aebff;
+	--sl-color-asides-border: #22d3ee;
+}
+
+/* ---- Code blocks: copy button in accent look ---- */
+.expressive-code .copy button {
+	background: rgba(138, 235, 255, 0.12) !important;
+	border: 1px solid rgba(138, 235, 255, 0.3) !important;
+	border-radius: 0.45rem !important;
+}
+.expressive-code .copy button:hover {
+	background: #8aebff !important;
+}
+.expressive-code .copy button div {
+	background-color: #8aebff !important;
+}
+.expressive-code .copy button:hover div {
+	background-color: #051424 !important;
+}
+
+/* ---- Help center: Perplexity article feel, decluttered ---- */
+
+/* Narrower, calmer content column like Perplexity articles */
+.sl-markdown-content {
+	max-width: 46rem;
+}
+.sl-markdown-content h2 {
+	margin-top: 2.2rem;
+	padding-top: 1.2rem;
+	border-top: 1px solid rgba(133, 147, 151, 0.12);
+}
+.sl-markdown-content table {
+	display: block;
+	overflow-x: auto;
+	border-radius: 0.9rem;
+	border: 1px solid rgba(133, 147, 151, 0.16);
+	box-shadow: var(--neu-out);
+}
+.sl-markdown-content img {
+	border-radius: 0.9rem;
+	border: 1px solid rgba(133, 147, 151, 0.16);
+	box-shadow: var(--neu-out);
+	max-width: 100%;
+}
+.sl-markdown-content blockquote {
+	border-inline-start: 3px solid #22d3ee;
+	background: linear-gradient(145deg, rgba(18, 33, 49, 0.9), rgba(13, 28, 45, 0.9));
+	border-radius: 0 0.9rem 0.9rem 0;
+	box-shadow: var(--neu-out);
+}
+.sl-markdown-content pre {
+	border-radius: 0.9rem !important;
+	border: 1px solid rgba(133, 147, 151, 0.16);
+	box-shadow: var(--neu-in);
+}
+
+/* Starlight cards + homepage toolbar in the same soft style */
+.help-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	flex-wrap: wrap;
+	margin: 1.2rem 0 0;
+	padding: 0.9rem 1rem;
+	border-radius: 1rem;
+	background: var(--neu-card);
+	border: 1px solid rgba(133, 147, 151, 0.14);
+	box-shadow: var(--neu-out);
+}
+
+.card-grid .card,
+.sl-card {
+	background: var(--neu-card) !important;
+	border: 1px solid rgba(133, 147, 151, 0.14) !important;
+	border-radius: 1rem !important;
+	box-shadow: var(--neu-out) !important;
+}
+
+/* Splash hero flatter + keep search focus */
+[data-template='splash'] .hero {
+	background:
+		radial-gradient(700px 240px at 50% -60px, rgba(138, 235, 255, 0.14), transparent 70%),
+		transparent;
+	border: 0;
+	box-shadow: none;
+}
+
+/* Audience dimming: User hides mod-dev cards (JS sets hidden),
+   fallback without JS: everything visible */
+html[data-audience='user'] .only-moddev {
+	opacity: 0.45;
+}
+
+/* Mobile: stack toolbar, full-width search */
+@media (max-width: 48rem) {
+	.help-toolbar {
+		align-items: stretch;
+		flex-direction: column;
+	}
 }

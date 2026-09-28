@@ -26,6 +26,8 @@ Rule of thumb: fast iteration and game-state automation → **Lua**. Spawning, c
 
 Each chapter ends with a checkpoint: something runnable you can verify in-game before moving on.
 
+> Task-oriented instead? [[Tutorials]] answers "how do I implement X" directly (VS Code setup, linting, shop items, presets, packs, debugging, publishing).
+
 ## What you will build
 
 Every track converges on the same sample mod — **ShiftHelper**: it greets you with your balance, logs money changes, repairs broken servers on a timer, keeps a setting, shows a small panel, and cleans up after itself. Lua builds it with the full API, C# mirrors it with registry + panel + patch, JS builds it with toasts + Toolkit panel + settings (same feature, script speed).

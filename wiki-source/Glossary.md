@@ -118,6 +118,14 @@ Generated Il2Cpp surface (`src/gregCore.GameApi/Generated/`, `tools/GameApiGener
 
 Boot self-diagnostics (directories, hook files, incompatible mods). Related: `IncompatibleModGuard` (unpatches the legacy 404-PersistentID mod).
 
+### GregLint
+
+Standalone static analysis + auto-fix for mods ([repo](https://github.com/mleem97/gregLint)): IL rules GL001–GL007, file rules GL101–GL105, `--fix`, text/JSON output. See [[Developer GregLint]].
+
+### gregCore Mod Tools (VS Code)
+
+VS Code extension ([repo](https://github.com/mleem97/gregVscode)): `greg.*` IntelliSense, snippets, scaffolding, GregLint tasks and a binary-free project audit. See [[Tutorials]].
+
 ## Data & configuration
 
 ### JSON (Newtonsoft.Json 13.0.3)

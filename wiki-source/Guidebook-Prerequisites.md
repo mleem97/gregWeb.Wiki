@@ -15,8 +15,8 @@ Verify: the loader log shows `HWID SYSTEM ACTIVE` and `[DynamicPatcher]` lines; 
 
 | Track | Tools | Check |
 |---|---|---|
-| Lua | Any text editor (VS Code recommended). No SDK, no build. | You can create folders under `UserData/gregCore/Mods/Lua/`. |
-| JS/TS | Any text editor + `tsc` for TypeScript. No game build. | You can create folders under `UserData/gregCore/Mods/JS/`. Types: `templates/js/greg.d.ts`. |
+| Lua | Any text editor (VS Code + *gregCore Mod Tools* extension recommended: `greg.*` IntelliSense, snippets, linting). No SDK, no build. | You can create folders under `UserData/gregCore/Mods/Lua/`. |
+| JS/TS | Any text editor + `tsc` for TypeScript (+ the VS Code extension for one-click `greg.d.ts` setup). No game build. | You can create folders under `UserData/gregCore/Mods/JS/`. Types: `templates/js/greg.d.ts`. |
 | C# | .NET 6 SDK + local game + loader install. Copy `MelonLoader/Il2CppAssemblies/` and `MelonLoader/net6/` into the repo's `references/` once. | `dotnet build -c Release` succeeds; `python3 scripts/validate_version.py 1.2.3` exits 0. |
 
 Full C# environment (GameApi regeneration, coverage, mirror/CI): [[Developer Environment]].

@@ -1,0 +1,89 @@
+---
+title: Article Kit for Authors
+description: Callouts, code snippets with copy button, images with placeholders, and language-specific sections — how we write wiki articles.
+---
+
+import Figure from '../../../components/article/Figure.astro';
+import CodeSnippet from '../../../components/article/CodeSnippet.astro';
+
+This is how the wiki stays readable as content grows: short paths (`/docs/lua/…`),
+one component per purpose, placeholders until final screenshots land.
+
+## Callouts
+
+`:::note`, `:::tip`, `:::caution`, `:::danger` — work in `.md` and `.mdx`,
+no import needed:
+
+:::note
+Neutral info — e.g. version notes (`gregCore 1.2.3`, game `1.0.50.15`).
+:::
+
+:::tip
+Recommendation — e.g. Lua track first, then C#.
+:::
+
+:::caution
+Pitfall — e.g. never write vanilla save fields directly.
+:::
+
+:::danger
+Data-loss risk — e.g. back up before GM patch tests.
+:::
+
+## Code with copy button
+
+Plain code blocks get the GitHub-style copy button **automatically**
+(expressive-code, incl. "Copied!" feedback):
+
+```lua
+-- ShiftHelper: minimal lifecycle
+function on_init()
+  greg.ui.log_info("ShiftHelper ready")
+end
+```
+
+For labeled snippets in `.mdx`, use `<CodeSnippet>`:
+
+<CodeSnippet title="main.lua" lang="lua" code={`function on_init()\n  greg.ui.log_info("ShiftHelper ready")\nend`} />
+
+## Images and containers
+
+`<Figure>` renders image + caption in soft-neumorphism style. Until final
+screenshots land: `Placehold.co` placeholders in terminal look:
+
+<Figure
+  src="https://placehold.co/1200x600/0d1c2d/8aebff?text=F1+Mod+Hub"
+  alt="Placeholder: F1 Mod Hub screenshot"
+  caption="Placeholder — final screenshot: F1 Mod Hub with ShiftHelper entry."
+/>
+
+Plain Markdown images (`![alt](url)`) automatically get rounded corners +
+shadow via the theme, but no caption.
+
+## Language-specific sections
+
+The **CodingLang filter** (global: cards, sidebar, articles) hides
+`<div data-langs="…">` containers. Languages: `lua`, `csharp`, `js`,
+`rust`, `modelling`. Example:
+
+<div data-langs="lua">
+**Lua only:** `greg.on("greg.Group.Method", callback)` subscribes to events —
+does not apply to C#.
+</div>
+
+<div data-langs="csharp">
+**C# only:** Harmony patches run through `gregCore.Patches` — does not
+apply to Lua.
+</div>
+
+Rule: always write `data-langs` containers so the page still makes sense
+with the filter on (no dangling references). Code blocks are deliberately
+**not** auto-filtered.
+
+## Search
+
+The help search queries — when configured via `PUBLIC_VECTOR_SEARCH_URL` —
+the vector graph DB first (with processing/enrichment, incl. `lang` and
+`audience` context), otherwise Pagefind directly. Contract:
+`POST { query, lang, audience }` → `{ results: [{ title, url, snippet }] }`.
+Details: `src/lib/vector-search.ts`.

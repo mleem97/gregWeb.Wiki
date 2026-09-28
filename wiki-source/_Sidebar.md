@@ -35,6 +35,7 @@
   - [[Guidebook Porting Matrix]]
   - [[Guidebook Release]]
   - [[Guidebook Next Languages]]
+- [[Tutorials]]
 - Players
   - [[Player Getting Started]]
   - [[Player Installation]]

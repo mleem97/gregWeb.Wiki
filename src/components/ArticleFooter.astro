@@ -1,0 +1,107 @@
+---
+// ArticleFooter — Perplexity article footer: feedback, related, Discord button.
+// Rendered on every page via the Footer override (doc pages only, not splash).
+import DiscordHelpButton from './DiscordHelpButton.astro';
+
+const { isSplash = false } = Astro.props;
+if (isSplash) return;
+---
+<div class="article-footer">
+  <div class="af-feedback" data-feedback>
+    <span>Was this article helpful?</span>
+    <span class="af-btns">
+      <button type="button" data-vote="yes" aria-label="Yes">Yes</button>
+      <button type="button" data-vote="no" aria-label="No">No</button>
+    </span>
+    <span class="af-thanks" hidden>Thanks — feedback saved locally.</span>
+  </div>
+  <div class="af-help">
+    <div>
+      <strong>Still stuck?</strong>
+      <span>Paste <code>mods</code>, <code>version</code> + log excerpt — then ask on Discord.</span>
+    </div>
+    <DiscordHelpButton compact />
+  </div>
+</div>
+
+<script>
+  function init() {
+    document.querySelectorAll('[data-feedback]').forEach((box) => {
+      const key = 'greg-feedback:' + location.pathname;
+      const thanks = box.querySelector('.af-thanks');
+      let voted = null;
+      try { voted = localStorage.getItem(key); } catch {}
+      if (voted && thanks) {
+        // @ts-ignore
+        thanks.hidden = false;
+      }
+      box.querySelectorAll('button[data-vote]').forEach((btn) => {
+        if (voted === btn.getAttribute('data-vote')) btn.classList.add('is-voted');
+        btn.addEventListener('click', () => {
+          try { localStorage.setItem(key, btn.getAttribute('data-vote') || ''); } catch {}
+          box.querySelectorAll('button[data-vote]').forEach((b) => b.classList.remove('is-voted'));
+          btn.classList.add('is-voted');
+          // @ts-ignore
+          if (thanks) thanks.hidden = false;
+        });
+      });
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+</script>
+
+<style>
+  .article-footer {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(133, 147, 151, 0.16);
+    display: grid;
+    gap: 1rem;
+  }
+  .af-feedback {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    color: #bbc9cd;
+    font-size: 0.9rem;
+  }
+  .af-btns { display: inline-flex; gap: 0.4rem; }
+  .af-btns button {
+    background: linear-gradient(145deg, #122131, #0d1c2d);
+    border: 1px solid rgba(133, 147, 151, 0.25);
+    color: #d4e4fa;
+    border-radius: 0.6rem;
+    padding: 0.35rem 0.8rem;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.35), -1px -1px 4px rgba(212,228,250,0.05);
+  }
+  .af-btns button.is-voted {
+    background: #8aebff;
+    color: #051424;
+    border-color: rgba(5,20,36,0.3);
+  }
+  .af-thanks { font-size: 0.82rem; color: #4de082; }
+  .af-help {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: linear-gradient(145deg, #0d1c2d, #122131);
+    border: 1px solid rgba(133, 147, 151, 0.14);
+    border-radius: 1rem;
+    padding: 1rem 1.1rem;
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.35), -2px -2px 8px rgba(212,228,250,0.04);
+  }
+  .af-help strong { display: block; color: #d4e4fa; margin-bottom: 0.15rem; }
+  .af-help span { color: #bbc9cd; font-size: 0.88rem; }
+  .af-help code { font-family: 'JetBrains Mono', monospace; font-size: 0.8em; background: #010f1f; padding: 0.1rem 0.35rem; border-radius: 0.3rem; }
+</style>

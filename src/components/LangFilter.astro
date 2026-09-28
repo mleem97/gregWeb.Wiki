@@ -1,0 +1,145 @@
+---
+// LangFilter — "CodingLang" dropdown: filters globally wherever useful:
+// - homepage cards + toolbar counter (data-langs)
+// - sidebar entries (by URL prefix from LANG_PREFIX — track pages only,
+//   Start/Framework/Guides always stay visible)
+// - article sections: authors use <div data-langs="lua csharp">…</div>
+//   in Markdown (HTML passes through). Code blocks are deliberately NOT
+//   auto-filtered (reference pages would look empty).
+import { LANG_LABEL, LANG_PREFIX } from '../config/site';
+---
+<label class="lang-filter">
+  <span class="lang-filter-label">CodingLang</span>
+  <span class="lang-filter-wrap">
+    <select id="coding-lang" aria-label="Filter by coding language">
+      <option value="all">All languages</option>
+      <option value="lua">Lua</option>
+      <option value="csharp">C#</option>
+      <option value="js">JavaScript</option>
+      <option value="rust">Rust</option>
+      <option value="modelling">Modelling (OBJ)</option>
+    </select>
+    <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M4 6l4 4 4-4H4z"/></svg>
+  </span>
+  <span class="lang-filter-count" data-lang-count></span>
+</label>
+
+<script>
+  import { LANG_PREFIX } from '../config/site.ts';
+
+  const KEY = 'greg-lang';
+  const SELECT_ID = 'coding-lang';
+
+  function langOfHref(href) {
+    const path = (href || '').split('?')[0].split('#')[0];
+    for (const [lang, prefixes] of Object.entries(LANG_PREFIX)) {
+      if (prefixes.some((p) => path.startsWith(p))) return lang;
+    }
+    return null;
+  }
+
+  function applyLang(value) {
+    const v = value || 'all';
+    document.documentElement.dataset.lang = v;
+    try { localStorage.setItem(KEY, v); } catch {}
+    const select = document.getElementById(SELECT_ID);
+    // @ts-ignore
+    if (select && select.value !== v) select.value = v;
+
+    // 1) Homepage cards / generic data-langs containers (incl. article sections)
+    let visible = 0;
+    let total = 0;
+    document.querySelectorAll('[data-langs]').forEach((el) => {
+      const langs = (el.getAttribute('data-langs') || '').split(' ').filter(Boolean);
+      total += 1;
+      const show = v === 'all' || langs.length === 0 || langs.includes(v);
+      // @ts-ignore
+      el.hidden = !show;
+      if (show) visible += 1;
+    });
+    document.querySelectorAll('[data-lang-count]').forEach((el) => {
+      el.textContent = v === 'all' ? `${total} sections` : `${visible} / ${total} sections`;
+    });
+
+    // 2) Sidebar: hide track pages only (by URL prefix), keep everything else.
+    //    Empty groups collapse instead of being removed (DOM stays stable for readers).
+    document.querySelectorAll('.sidebar-content li').forEach((li) => {
+      const link = li.querySelector(':scope > a[href]');
+      if (!link) return;
+      const lang = langOfHref(link.getAttribute('href'));
+      // @ts-ignore
+      li.hidden = lang !== null && v !== 'all' && lang !== v;
+    });
+    document.querySelectorAll('.sidebar-content details').forEach((group) => {
+      const items = group.querySelectorAll('li');
+      if (!items.length) return;
+      const anyVisible = Array.from(items).some((li) => !li.hidden);
+      // @ts-ignore
+      group.open = anyVisible ? group.open : false;
+      // @ts-ignore
+      group.style.display = anyVisible ? '' : 'none';
+    });
+  }
+
+  function init() {
+    let saved = 'all';
+    try { saved = localStorage.getItem(KEY) || 'all'; } catch {}
+    applyLang(saved);
+    document.getElementById(SELECT_ID)?.addEventListener('change', (e) => {
+      // @ts-ignore
+      applyLang(e.target.value);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+</script>
+
+<style>
+  .lang-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    color: #bbc9cd;
+  }
+  .lang-filter-label {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+  }
+  .lang-filter-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .lang-filter select {
+    appearance: none;
+    background: linear-gradient(145deg, #122131, #0d1c2d);
+    color: #d4e4fa;
+    border: 1px solid rgba(133, 147, 151, 0.2);
+    border-radius: 0.7rem;
+    padding: 0.5rem 2rem 0.5rem 0.8rem;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow:
+      3px 3px 10px rgba(0, 0, 0, 0.35),
+      -1px -1px 5px rgba(212, 228, 250, 0.05);
+  }
+  .lang-filter-wrap svg {
+    position: absolute;
+    right: 0.6rem;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  .lang-filter-count {
+    font-size: 0.78rem;
+    opacity: 0.75;
+  }
+</style>

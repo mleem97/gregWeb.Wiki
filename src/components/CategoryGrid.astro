@@ -1,0 +1,150 @@
+---
+// CategoryGrid — decluttered categories in the Perplexity sense, with
+// CodingLang tags + audience tags + Placehold.co images (MDX-ready).
+// data-langs: all | lua csharp js rust modelling (empty = always visible)
+// data-audiences: user moddev (empty = both)
+
+const categories = [
+  {
+    title: 'Start here',
+    desc: 'Install, Mod Hub & first steps — for players and new mod devs.',
+    href: './docs/start/getting-started/',
+    img: 'https://placehold.co/600x300/122131/8aebff?text=Start',
+    meta: '7 articles · 5 min',
+    langs: '',
+    audiences: '',
+  },
+  {
+    title: 'Lua track',
+    desc: 'Fastest iteration: first mod, events, timers, UI, systems.',
+    href: './docs/lua/01-first-mod/',
+    img: 'https://placehold.co/600x300/122131/8aebff?text=Lua',
+    meta: '7 articles · production',
+    langs: 'lua',
+    audiences: 'moddev',
+  },
+  {
+    title: 'C# track',
+    desc: 'Full power: setup, lifecycle, UI, patches, saves + deploy.',
+    href: './docs/csharp/01-setup/',
+    img: 'https://placehold.co/600x300/0d1c2d/4de082?text=C%23',
+    meta: '8 articles · production',
+    langs: 'csharp',
+    audiences: 'moddev',
+  },
+  {
+    title: 'JS track',
+    desc: 'UI-focused: toasts, panels, F1 menu, settings, HotLoad.',
+    href: './docs/js/01-setup/',
+    img: 'https://placehold.co/600x300/122131/d5dcf6?text=JS',
+    meta: '2 articles · production',
+    langs: 'js',
+    audiences: 'moddev',
+  },
+  {
+    title: 'Rust track',
+    desc: 'Native: setup + events/hooks project, FFI bridges.',
+    href: './docs/rust/01-setup/',
+    img: 'https://placehold.co/600x300/1c2b3c/ffb4ab?text=Rust',
+    meta: '2 articles · preview',
+    langs: 'rust',
+    audiences: 'moddev',
+  },
+  {
+    title: 'Modelling (OBJ)',
+    desc: 'Static only: overview, Blender, shop item, static item.',
+    href: './docs/modelling/overview/',
+    img: 'https://placehold.co/600x300/122131/b9c0da?text=OBJ',
+    meta: '5 articles',
+    langs: 'modelling',
+    audiences: 'moddev',
+  },
+  {
+    title: 'Core & Hooks',
+    desc: 'Architecture, save engine, 1,850 hooks in 22 groups.',
+    href: './docs/core/overview/',
+    img: 'https://placehold.co/600x300/0d2b3a/8aebff?text=Core',
+    meta: '5 articles · reference',
+    langs: '',
+    audiences: 'moddev',
+  },
+  {
+    title: 'Guides & FAQ',
+    desc: 'Tutorials, debugging, porting matrix, release, troubleshooting.',
+    href: './faq/troubleshooting/',
+    img: 'https://placehold.co/600x300/122131/4de082?text=FAQ',
+    meta: '8 articles · how-to',
+    langs: '',
+    audiences: '',
+  },
+  {
+    title: 'User docs',
+    desc: 'Playing with mods: installation, Mod Hub, HUD — on datacentermods.com.',
+    href: 'https://datacentermods.com',
+    img: 'https://placehold.co/600x300/122131/d4e4fa?text=User',
+    meta: 'external · datacentermods.com',
+    langs: '',
+    audiences: 'user',
+    external: true,
+  },
+];
+---
+<section class="cat-grid" aria-label="Categories">
+  {categories.map((c) => (
+    <a
+      class="cat-card"
+      href={c.href}
+      data-searchable
+      data-langs={c.langs}
+      data-audiences={c.audiences}
+      target={c.external ? '_blank' : undefined}
+      rel={c.external ? 'noopener noreferrer' : undefined}
+    >
+      <span class="cat-img">
+        <img src={c.img} alt="" loading="lazy" width="600" height="300" />
+      </span>
+      <span class="cat-body">
+        <span class="cat-title">{c.title} <span aria-hidden="true">›</span></span>
+        <span class="cat-desc">{c.desc}</span>
+        <span class="cat-meta">{c.meta}</span>
+      </span>
+    </a>
+  ))}
+</section>
+
+<style>
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+    margin: 1.4rem 0 0;
+  }
+  .cat-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 1.1rem;
+    text-decoration: none;
+    background: linear-gradient(145deg, #122131, #0d1c2d);
+    border: 1px solid rgba(133, 147, 151, 0.14);
+    /* Soft neumorphism: raised, but flat-minimalist */
+    box-shadow:
+      5px 5px 14px rgba(0, 0, 0, 0.38),
+      -2px -2px 8px rgba(212, 228, 250, 0.05);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .cat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(138, 235, 255, 0.35);
+    box-shadow:
+      8px 8px 20px rgba(0, 0, 0, 0.42),
+      -2px -2px 10px rgba(212, 228, 250, 0.06),
+      0 0 24px -8px rgba(138, 235, 255, 0.35);
+  }
+  .cat-img { display: block; aspect-ratio: 2 / 1; overflow: hidden; background: #010f1f; }
+  .cat-img img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.95; }
+  .cat-body { display: flex; flex-direction: column; gap: 0.35rem; padding: 0.9rem 1rem 1rem; }
+  .cat-title { font-weight: 700; color: #d4e4fa; font-size: 1rem; }
+  .cat-desc { color: #bbc9cd; font-size: 0.88rem; line-height: 1.45; }
+  .cat-meta { color: #859397; font-size: 0.76rem; font-family: 'JetBrains Mono', monospace; }
+</style>

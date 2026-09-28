@@ -1,0 +1,142 @@
+---
+// AudienceSwitch — User ⇄ Mod-Dev. Persisted to localStorage.
+// User = player: notice banner + link to datacentermods.com.
+// Mod-Dev = full guidebook/developer view (default).
+import { SITE_LINKS } from '../config/site';
+
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+<div class:list={['audience-switch', compact && 'is-compact']} role="group" aria-label="Audience">
+  <button type="button" data-audience="user" aria-pressed="false">User</button>
+  <button type="button" data-audience="moddev" aria-pressed="true">Mod-Dev</button>
+</div>
+<div class="audience-note" data-audience-note hidden>
+  <p>
+    <strong>User docs</strong> live on
+    <a href={SITE_LINKS.userDocs} target="_blank" rel="noopener noreferrer">datacentermods.com</a>
+    — install, Mod Hub &amp; playing. This wiki stays the mod-dev reference.
+  </p>
+  <p>
+    <a class="audience-cta" href={SITE_LINKS.userDocs} target="_blank" rel="noopener noreferrer">
+      Go to user docs &gt;
+    </a>
+    <button type="button" class="audience-stay" data-audience-stay>Stay here anyway</button>
+  </p>
+</div>
+
+<script>
+  const KEY = 'greg-audience';
+  const root = document.documentElement;
+
+  function applyAudience(value) {
+    const v = value === 'user' ? 'user' : 'moddev';
+    root.dataset.audience = v;
+    try { localStorage.setItem(KEY, v); } catch {}
+    document.querySelectorAll('.audience-switch').forEach((wrap) => {
+      wrap.querySelectorAll('button[data-audience]').forEach((btn) => {
+        const active = btn.getAttribute('data-audience') === v;
+        btn.setAttribute('aria-pressed', String(active));
+        btn.classList.toggle('is-active', active);
+      });
+    });
+    document.querySelectorAll('[data-audience-note]').forEach((el) => {
+      // @ts-ignore
+      el.hidden = v !== 'user';
+    });
+    // Filter categories + sidebar entries
+    document.querySelectorAll('[data-audiences]').forEach((el) => {
+      const list = (el.getAttribute('data-audiences') || '').split(' ').filter(Boolean);
+      // @ts-ignore
+      el.hidden = list.length > 0 && !list.includes(v);
+    });
+  }
+
+  function init() {
+    let saved = 'moddev';
+    try { saved = localStorage.getItem(KEY) || 'moddev'; } catch {}
+    applyAudience(saved);
+    document.querySelectorAll('.audience-switch button[data-audience]').forEach((btn) => {
+      btn.addEventListener('click', () => applyAudience(btn.getAttribute('data-audience')));
+    });
+    document.querySelectorAll('[data-audience-stay]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-audience-note]').forEach((el) => {
+          // @ts-ignore
+          el.hidden = true;
+        });
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+</script>
+
+<style>
+  .audience-switch {
+    display: inline-flex;
+    padding: 3px;
+    gap: 2px;
+    border-radius: 999px;
+    background: #0d1c2d;
+    border: 1px solid rgba(133, 147, 151, 0.16);
+    box-shadow:
+      inset 2px 2px 6px rgba(0, 0, 0, 0.45),
+      inset -1px -1px 3px rgba(212, 228, 250, 0.06);
+  }
+  .audience-switch button {
+    border: 0;
+    background: transparent;
+    color: #bbc9cd;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .audience-switch button.is-active {
+    background: #8aebff;
+    color: #051424;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.35) inset,
+      0 4px 12px -4px rgba(138, 235, 255, 0.5);
+  }
+  .audience-switch.is-compact button {
+    padding: 0.3rem 0.65rem;
+    font-size: 0.78rem;
+  }
+  .audience-note {
+    margin-top: 0.8rem;
+    padding: 0.9rem 1rem;
+    border-radius: 1rem;
+    background: linear-gradient(145deg, #0d1c2d, #122131);
+    border: 1px solid rgba(138, 235, 255, 0.22);
+    box-shadow:
+      4px 4px 12px rgba(0, 0, 0, 0.35),
+      -2px -2px 8px rgba(212, 228, 250, 0.04);
+    font-size: 0.9rem;
+  }
+  .audience-note p { margin: 0.3rem 0; }
+  .audience-cta {
+    display: inline-block;
+    margin-right: 0.8rem;
+    color: #8aebff;
+    font-weight: 700;
+  }
+  .audience-stay {
+    background: none;
+    border: 0;
+    color: #bbc9cd;
+    text-decoration: underline;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.85rem;
+  }
+</style>

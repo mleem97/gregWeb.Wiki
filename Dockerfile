@@ -9,7 +9,9 @@ RUN npm ci --no-audit --no-fund
 COPY . ./
 RUN npm run build
 
-FROM nginx:1.29-alpine AS serve
+# Rootless: unprivileged nginx (UID 101, kein Root im Container).
+# Vollqualifiziert, damit auch Podman ohne Search-Registry baut.
+FROM docker.io/nginxinc/nginx-unprivileged:1.29-alpine AS serve
 
 LABEL org.opencontainers.image.source="https://github.com/mleem97/gregWeb.Wiki"
 LABEL org.opencontainers.image.description="gregCore Wiki — guidebook and reference for the Data Center mod framework"
@@ -17,4 +19,4 @@ LABEL org.opencontainers.image.licenses="Apache-2.0"
 
 COPY --from=build /site/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
+EXPOSE 8080

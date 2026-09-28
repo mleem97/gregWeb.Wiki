@@ -1,0 +1,37 @@
+---
+import { SITE_LINKS } from '../config/site';
+import ArticleFooter from './ArticleFooter.astro';
+
+// Starlight footer override: default footer + Perplexity article footer
+// (feedback + Discord "Get more help >").
+// No article footer on splash (homepage) — the CategoryGrid lives there.
+const pathname = Astro.url.pathname;
+const isSplash = pathname === '/' || pathname === '/index.html';
+---
+<div class="greg-footer">
+  {!isSplash && <ArticleFooter />}
+  <footer class="sl-footer">
+    <p>
+      gregCore Wiki · <a href={SITE_LINKS.githubCore} target="_blank" rel="noopener noreferrer">GitHub</a>
+      {' · '}<a href={SITE_LINKS.discord} target="_blank" rel="noopener noreferrer">Discord</a>
+      {' · '}<a href={SITE_LINKS.userDocs} target="_blank" rel="noopener noreferrer">User docs (datacentermods.com)</a>
+    </p>
+    <p class="muted">
+      Terminal-Cyan · Apache-2.0 · Images: Placehold.co placeholders until final screenshots land.
+      {' '}Discord invite expired? <a href={SITE_LINKS.discordFallback} target="_blank" rel="noopener noreferrer">Fallback invite</a>.
+    </p>
+  </footer>
+</div>
+
+<style>
+  .greg-footer { margin-top: 1rem; }
+  .sl-footer {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(133, 147, 151, 0.12);
+    font-size: 0.82rem;
+    color: #859397;
+  }
+  .sl-footer a { color: #8aebff; text-decoration: none; }
+  .sl-footer .muted { opacity: 0.8; margin-top: 0.2rem; }
+</style>
