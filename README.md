@@ -49,9 +49,15 @@ Fehler/timeout (>2,5 s) fallen still auf Pagefind zurück.
 ## Container
 
 ```bash
-podman build -t gregweb-wiki:latest .
-podman run -d --restart unless-stopped --name gregweb-wiki -p 127.0.0.1:8090:80 gregweb-wiki:latest
+podman build --pull=always --no-cache -t gregweb-wiki:latest .
+podman run -d --restart unless-stopped --name gregweb-wiki -p 127.0.0.1:8090:8080 gregweb-wiki:latest
 ```
+
+The runtime uses the minimal unprivileged nginx image and installs available
+Alpine security updates during the image build. Rebuild with fresh base images
+and without layer cache to pick up security fixes. In Coolify, set the exposed
+application port to **8080** and rebuild without cache. Keep the security gate
+enabled; only a new scan can confirm whether all blocking findings are resolved.
 
 Portainer: repository stack, compose path `docker-compose.yml`
 (`WIKI_PORT` sets the host port, default 8088; Traefik block prepared).
