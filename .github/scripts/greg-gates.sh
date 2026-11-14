@@ -162,7 +162,7 @@ esac
 
 # ---------- version consistency (repos with VERSION file) ----------
 if [ -f VERSION ]; then
-  python3 - <<'PYEOF' >>gate-report.txt 2>&1 || echo "GATE consistency: FAIL - checker error" | tee -a gate-report.txt
+  CONS_OUT="$(python3 - <<'PYEOF' 2>&1
 import re, json, subprocess, glob, sys
 def sh(*a):
     try: return subprocess.run(a, capture_output=True, text=True).stdout.strip()
