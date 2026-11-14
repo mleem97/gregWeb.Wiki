@@ -11,7 +11,12 @@ RUN npm run build
 
 # Rootless: unprivileged nginx (UID 101, kein Root im Container).
 # Vollqualifiziert, damit auch Podman ohne Search-Registry baut.
-FROM docker.io/nginxinc/nginx-unprivileged:1.29-alpine AS serve
+FROM docker.io/nginx/nginx-unprivileged:1.30.6-alpine-slim AS serve
+
+# Apply available security fixes; keep the runtime unprivileged.
+USER root
+RUN apk upgrade --no-cache
+USER 101
 
 LABEL org.opencontainers.image.source="https://github.com/mleem97/gregWeb.Wiki"
 LABEL org.opencontainers.image.description="gregCore Wiki — guidebook and reference for the Data Center mod framework"

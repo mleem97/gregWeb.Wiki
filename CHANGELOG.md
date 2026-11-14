@@ -80,6 +80,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Version: see [
 
 ### Fixed
 
+- Container runtime: replace nginx 1.29 with the minimal unprivileged nginx
+  1.30.6 image and apply available Alpine security updates during build.
+  Keep UID 101 and port 8080; align Compose and the documented local command
+  with that port. Document fresh, uncached rebuilds and the Coolify security gate.
+
 - Doppelte Überschriften: `scripts/import-wiki.mjs` übernimmt das erste
   `# H1` nur noch als Frontmatter-`title` und entfernt es aus dem Body —
   Starlight rendert den Titel sonst doppelt (Frontmatter-H1 + Markdown-H1).
