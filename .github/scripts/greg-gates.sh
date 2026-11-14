@@ -195,11 +195,9 @@ for f in sp.run(["git", "grep", "-l", "MelonInfo", "--", "src"], capture_output=
                 if re.sub(r"-dev$", "", v) != base:
                     ok = False; notes.append(f"{f}: MelonInfo {v}")
 print(("GATE consistency: PASS - all version sources agree on " + base) if ok else ("GATE consistency: FAIL - " + "; ".join(notes) + f" (VERSION base={base})"))
-sys.exit(0)
+sys.exit(0 if ok else 1)
 PYEOF
-)"
-  echo "$CONS_OUT" >>gate-report.txt
-  echo "$CONS_OUT" | grep -q "^GATE consistency: PASS" || GATES_OK=false
+  [ $? -eq 0 ] || GATES_OK=false
 else gna consistency "no VERSION file"; fi
 
 # ---------- conventional commits ----------
